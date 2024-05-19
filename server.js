@@ -1,30 +1,34 @@
+//creates an express application
 const express = require('express');
+//utility for working with file and directory paths
 const path = require('path');
-const api = require('./routes/apitRoutes') 
+//brings in the apiRoutes.js file
+const apiRoutes = require('./routes/apiRoutes');
 
-const PORT = process.env.PORT || 3001
+//creates a port variable and opens it at 3001 if a different port is not set
+const PORT = process.env.PORT || 3001;
+
+//configurs the app that you will use, a new express application instance
 const app = express();
 
-// Middleware code 
-//express.json express.urlencoded express.static 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
-
-app.use('/api', api);
-
+//middleware
 app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// GET code for the /notes route 
+apiRoutes(app);
+
+//calls the index.html file when the localhost:3001 is called
+app.get('/', (req, res) =>
+res.sendFile(path.join(__dirname, '/public/index.html'))
+);
+
+//calls the notes.html page when api/notes is typed
 app.get('/notes', (req, res) =>
-    res.sendFile(path.join(__dirname, '/public/notes.html'))
+res.sendFile(path.join(__dirname, '/public/notes.html'))
 );
 
-// GET code the home page. * (wildcard) captures all other addresses  
-app.get('*', (req, res) =>
-    res.sendFile(path.join(__dirname, '/public/index.html'))
+//sets the port to listen at 3001 local host
+app.listen(PORT, () =>
+console.log(`App listening at https://localhost:${PORT}`)
 );
-
-// 
-app.listen(PORT, () => {
-    console.log('app is listening http://localhost:' + PORT)
-})
