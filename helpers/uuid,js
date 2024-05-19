@@ -1,5 +1,8 @@
 // Immediately export a function that generates a string of random numbers and letters
 module.exports = () =>
-  Math.floor((1 + Math.random()) * 0x10000)
-    .toString(16)
-    .substring(1);
+    // Generate a random number between 0 and 1, add 1, convert it to hexadecimal,
+    // remove the leading '0.' using substring, and convert it to a string
+    Math.floor((1 + Math.random()) * 0x10000)
+      .toString(16)
+      .substring(1);
+  

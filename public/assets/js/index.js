@@ -1,12 +1,15 @@
-let noteForm;
-let noteTitle;
-let noteText;
-let saveNoteBtn;
-let newNoteBtn;
-let clearBtn;
-let noteList;
+// Declare variables to store references to DOM elements
+let noteForm; // Form element for notes
+let noteTitle; // Input field for note title
+let noteText; // Textarea field for note content
+let saveNoteBtn; // Button to save a note
+let newNoteBtn; // Button to create a new note
+let clearBtn; // Button to clear the form
+let noteList; // List element to display notes
 
+// Check if the current page is the '/notes' page
 if (window.location.pathname === '/notes') {
+  // If on the '/notes' page, assign references to DOM elements
   noteForm = document.querySelector('.note-form');
   noteTitle = document.querySelector('.note-title');
   noteText = document.querySelector('.note-textarea');
@@ -16,19 +19,20 @@ if (window.location.pathname === '/notes') {
   noteList = document.querySelector('.list-group');
 }
 
-// Show an element
+// Function to show an element
 const show = (elem) => {
   elem.style.display = 'inline';
 };
 
-// Hide an element
+// Function to hide an element
 const hide = (elem) => {
   elem.style.display = 'none';
 };
 
-// activeNote is used to keep track of the note in the textarea
+// Variable to store the active note being edited
 let activeNote = {};
 
+// Function to fetch notes from the server
 const getNotes = () =>
   fetch('/api/notes', {
     method: 'GET',
@@ -37,6 +41,7 @@ const getNotes = () =>
     }
   });
 
+// Function to save a note to the server
 const saveNote = (note) =>
   fetch('/api/notes', {
     method: 'POST',
@@ -46,6 +51,7 @@ const saveNote = (note) =>
     body: JSON.stringify(note)
   });
 
+// Function to delete a note from the server
 const deleteNote = (id) =>
   fetch(`/api/notes/${id}`, {
     method: 'DELETE',
@@ -54,6 +60,7 @@ const deleteNote = (id) =>
     }
   });
 
+// Function to render the active note in the form
 const renderActiveNote = () => {
   hide(saveNoteBtn);
   hide(clearBtn);
@@ -73,6 +80,7 @@ const renderActiveNote = () => {
   }
 };
 
+// Event handler to save a note
 const handleNoteSave = () => {
   const newNote = {
     title: noteTitle.value,
@@ -84,9 +92,8 @@ const handleNoteSave = () => {
   });
 };
 
-// Delete the clicked note
+// Event handler to delete a note
 const handleNoteDelete = (e) => {
-  // Prevents the click listener for the list from being called when the button inside of it is clicked
   e.stopPropagation();
 
   const note = e.target.parentElement;
@@ -102,21 +109,21 @@ const handleNoteDelete = (e) => {
   });
 };
 
-// Sets the activeNote and displays it
+// Event handler to view a note
 const handleNoteView = (e) => {
   e.preventDefault();
   activeNote = JSON.parse(e.target.parentElement.dataset.note);
   renderActiveNote();
 };
 
-// Sets the activeNote to and empty object and allows the user to enter a new note
+// Event handler to create a new note view
 const handleNewNoteView = () => {
   activeNote = {};
   show(clearBtn);
   renderActiveNote();
 };
 
-// Renders the appropriate buttons based on the state of the form
+// Event handler to render buttons based on form state
 const handleRenderBtns = () => {
   show(clearBtn);
   if (!noteTitle.value.trim() && !noteText.value.trim()) {
@@ -128,7 +135,7 @@ const handleRenderBtns = () => {
   }
 };
 
-// Render the list of note titles
+// Function to render the list of notes
 const renderNoteList = async (notes) => {
   const jsonNotes = await notes.json();
   noteList.innerHTML = '';
@@ -156,9 +163,10 @@ const renderNoteList = async (notes) => {
   });
 };
 
-// Gets notes from the db and renders them to the sidebar
+// Function to fetch and render notes
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
 
+// Event listeners for note form elements
 if (window.location.pathname === '/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
   newNoteBtn.addEventListener('click', handleNewNoteView);
@@ -166,4 +174,5 @@ if (window.location.pathname === '/notes') {
   noteForm.addEventListener('input', handleRenderBtns);
 }
 
+// Initial fetch and render of notes
 getAndRenderNotes();
